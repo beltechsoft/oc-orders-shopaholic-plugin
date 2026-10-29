@@ -1,1 +1,16 @@
-Your order {{ order_number }} on the <a href="{{ site_url }}">site</a> was successfully created.
+subject = "Ваш заказ № {{ order_number }} принят"
+description = "Письмо покупателю о новом заказе: доставка, оплата и состав заказа"
+==
+{% set property = order.property %}
+{% set cell = 'padding:6px 10px; border-bottom:1px solid #e5e5e5; vertical-align:top; text-align:left;' %}
+{% set domain = site_url|replace({'https://': '', 'http://': ''})|trim('/') %}
+{% set customer = [property.name, property.middle_name]|filter(v => v)|join(' ') %}
+{% partial 'table' body %}
+<p style="margin:0 0 16px;">Здравствуйте{{ customer ? ', ' ~ customer }}!</p>
+
+<p style="margin:0 0 16px;">Ваш заказ № <strong>{{ order_number }}</strong> от {{ order.created_at|date('d.m.Y H:i', timezone) }} на сайте <a href="{{ site_url }}">{{ domain }}</a> принят. Мы свяжемся с вами для подтверждения.</p>
+
+{% partial 'order-delivery' order=order cell=cell %}
+
+{% partial 'order-positions' order=order cell=cell currency=currency %}
+{% endpartial %}

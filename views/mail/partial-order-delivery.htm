@@ -1,0 +1,38 @@
+name = "Заказ: доставка и оплата"
+==
+{% set property = order.property %}
+{% set code = order.shipping_type.code %}
+{% set address = [] %}
+{% for prefix in ['shipping_' ~ code ~ '_', 'shipping_'] %}
+{% if address is empty %}
+{% set address = [
+    property[prefix ~ 'postcode'],
+    property[prefix ~ 'country'],
+    property[prefix ~ 'state'],
+    property[prefix ~ 'city'],
+    property[prefix ~ 'street'] ? 'ул. ' ~ property[prefix ~ 'street'],
+    property[prefix ~ 'house'] ? 'д. ' ~ property[prefix ~ 'house'],
+    property[prefix ~ 'building'] ? 'корп. ' ~ property[prefix ~ 'building'],
+    property[prefix ~ 'flat'] ? 'кв. ' ~ property[prefix ~ 'flat'],
+    property[prefix ~ 'address1'],
+    property[prefix ~ 'address2'],
+]|filter(v => v) %}
+{% endif %}
+{% endfor %}
+{% set comment = property['shipping_' ~ code ~ '_comment'] ?: property.comment %}
+{% if order.shipping_type or address is not empty or comment or order.payment_method %}
+<table cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+{% if order.shipping_type %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Доставка</td><td style="{{ cell }}">{{ order.shipping_type.name }}</td></tr>
+{% endif %}
+{% if address is not empty %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Адрес</td><td style="{{ cell }}">{{ address|join(', ') }}</td></tr>
+{% endif %}
+{% if comment %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Комментарий</td><td style="{{ cell }}">{{ comment|nl2br }}</td></tr>
+{% endif %}
+{% if order.payment_method %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Оплата</td><td style="{{ cell }}">{{ order.payment_method.name }}</td></tr>
+{% endif %}
+</table>
+{% endif %}

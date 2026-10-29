@@ -1,0 +1,39 @@
+name = "Заказ: состав"
+==
+<h3 style="margin:24px 0 8px;">Состав заказа</h3>
+<table cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+<tr>
+<th style="{{ cell }}">Товар</th>
+<th style="{{ cell }} white-space:nowrap;">Кол-во</th>
+<th style="{{ cell }} white-space:nowrap; text-align:right;">Цена</th>
+<th style="{{ cell }} white-space:nowrap; text-align:right;">Сумма</th>
+</tr>
+{% for position in order.order_position %}
+{% set offer = position.item %}
+{% set sku = offer.code ?: offer.product.code %}
+<tr>
+<td style="{{ cell }}">
+{{ offer.product.name ?: offer.name }}
+{% if offer.name and offer.name != offer.product.name %}<br><span style="color:#777;">{{ offer.name }}</span>{% endif %}
+{% if sku %}<br><span style="color:#777;">Артикул: {{ sku }}</span>{% endif %}
+</td>
+<td style="{{ cell }} white-space:nowrap;">{{ position.quantity }} шт.</td>
+<td style="{{ cell }} white-space:nowrap; text-align:right;">{{ position.price_data.price_per_unit }} {{ currency }}</td>
+<td style="{{ cell }} white-space:nowrap; text-align:right;">{{ position.price_data.price }} {{ currency }}</td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="3" style="{{ cell }} text-align:right;">Товары</td>
+<td style="{{ cell }} white-space:nowrap; text-align:right;">{{ order.position_total_price_data.price }} {{ currency }}</td>
+</tr>
+{% if order.shipping_price_data.price_value > 0 %}
+<tr>
+<td colspan="3" style="{{ cell }} text-align:right;">Доставка</td>
+<td style="{{ cell }} white-space:nowrap; text-align:right;">{{ order.shipping_price_data.price }} {{ currency }}</td>
+</tr>
+{% endif %}
+<tr>
+<td colspan="3" style="{{ cell }} text-align:right; font-weight:bold;">Итого</td>
+<td style="{{ cell }} white-space:nowrap; text-align:right; font-weight:bold;">{{ order.total_price_data.price }} {{ currency }}</td>
+</tr>
+</table>

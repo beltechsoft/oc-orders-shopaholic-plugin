@@ -1,1 +1,24 @@
-A new order {{ order_number }} was created on the <a href="{{ site_url }}">site</a>.
+subject = "Новый заказ № {{ order_number }}"
+description = "Уведомление менеджеру о новом заказе: покупатель, доставка, оплата и состав заказа"
+==
+{% set property = order.property %}
+{% set cell = 'padding:6px 10px; border-bottom:1px solid #e5e5e5; vertical-align:top; text-align:left;' %}
+{% set domain = site_url|replace({'https://': '', 'http://': ''})|trim('/') %}
+{% partial 'table' body %}
+<p style="margin:0 0 16px;">На сайте <a href="{{ site_url }}">{{ domain }}</a> оформлен заказ № <strong>{{ order_number }}</strong> от {{ order.created_at|date('d.m.Y H:i', timezone) }}.</p>
+
+<h3 style="margin:16px 0 8px;">Покупатель</h3>
+<table cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Имя</td><td style="{{ cell }}">{{ [property.last_name, property.name]|filter(v => v)|join(' ') }}</td></tr>
+{% if property.phone %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Телефон</td><td style="{{ cell }}"><a href="tel:{{ property.phone|replace({' ': '', '(': '', ')': '', '-': ''}) }}">{{ property.phone }}</a></td></tr>
+{% endif %}
+{% if property.email %}
+<tr><td style="{{ cell }} width:35%; font-weight:bold;">Email</td><td style="{{ cell }}"><a href="mailto:{{ property.email }}">{{ property.email }}</a></td></tr>
+{% endif %}
+</table>
+
+{% partial 'order-delivery' order=order cell=cell %}
+
+{% partial 'order-positions' order=order cell=cell currency=currency %}
+{% endpartial %}

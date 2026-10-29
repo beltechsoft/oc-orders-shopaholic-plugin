@@ -5,6 +5,7 @@ use Lovata\Toolbox\Classes\Event\ModelHandler;
 use Lovata\Toolbox\Classes\Helper\SendMailHelper;
 
 use Lovata\Shopaholic\Models\Settings;
+use Lovata\Shopaholic\Classes\Helper\CurrencyHelper;
 use Lovata\OrdersShopaholic\Models\Order;
 use Lovata\OrdersShopaholic\Classes\Item\OrderItem;
 use Lovata\OrdersShopaholic\Classes\Processor\OrderProcessor;
@@ -165,6 +166,8 @@ class OrderModelHandler extends ModelHandler
             'order'        => $this->obElement,
             'order_number' => $this->obElement->order_number,
             'site_url'     => config('app.url'),
+            'timezone'     => config('cms.timezone'),
+            'currency'     => $this->obElement->currency_symbol ?: CurrencyHelper::instance()->getActiveCurrencySymbol(),
         ];
 
         return $arResult;

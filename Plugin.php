@@ -146,6 +146,17 @@ class Plugin extends PluginBase
     }
 
     /**
+     * @return array
+     */
+    public function registerMailPartials()
+    {
+        return [
+            'order-delivery'  => 'lovata.ordersshopaholic::mail.partial-order-delivery',
+            'order-positions' => 'lovata.ordersshopaholic::mail.partial-order-positions',
+        ];
+    }
+
+    /**
      * Register console command
      */
     public function register()
